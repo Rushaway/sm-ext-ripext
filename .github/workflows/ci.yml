@@ -84,6 +84,7 @@ jobs:
             cd ./Linux/
             tar -czf ../${{ github.event.repository.name }}-${version}-linux.tar.gz -T <(\ls -1)
             cd -
+          fi
 
       - name: Release
         uses: svenstaro/upload-release-action@v2
