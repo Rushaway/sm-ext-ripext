@@ -30,6 +30,7 @@ for cxx in builder.targets:
     'strconv.c',
     'utf.c',
     'value.c',
+    'version.c',
   ]
 
   rvalue[binary.compiler.target.arch] = builder.Add(binary)
