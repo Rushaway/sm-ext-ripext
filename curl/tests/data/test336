@@ -31,11 +31,11 @@ REPLY SIZE 500 no such command
 <server>
 ftp
 </server>
- <name>
+<name>
 FTP range download when SIZE doesn't work
- </name>
- <command>
-ftp://%HOSTIP:%FTPPORT/336 --use-ascii --range 3-6
+</name>
+<command>
+ftp://%HOSTIP:%FTPPORT/%TESTNUMBER --range 3-6
 </command>
 </client>
 
@@ -47,10 +47,10 @@ PASS ftp@example.com
 PWD
 EPSV
 PASV
-TYPE A
-SIZE 336
+TYPE I
+SIZE %TESTNUMBER
 REST 3
-RETR 336
+RETR %TESTNUMBER
 ABOR
 QUIT
 </protocol>

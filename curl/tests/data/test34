@@ -41,11 +41,11 @@ aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabbbbbbbbbbbbbbbb
 <server>
 http
 </server>
- <name>
+<name>
 HTTP GET with chunked Transfer-Encoding
- </name>
- <command>
-http://%HOSTIP:%HTTPPORT/34
+</name>
+<command>
+http://%HOSTIP:%HTTPPORT/%TESTNUMBER
 </command>
 </client>
 
@@ -53,7 +53,7 @@ http://%HOSTIP:%HTTPPORT/34
 # Verify data after the test has been "shot"
 <verify>
 <protocol>
-GET /34 HTTP/1.1
+GET /%TESTNUMBER HTTP/1.1
 Host: %HOSTIP:%HTTPPORT
 User-Agent: curl/%VERSION
 Accept: */*

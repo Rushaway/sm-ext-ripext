@@ -16,17 +16,17 @@ SMTP
 <server>
 smtp
 </server>
- <name>
+<name>
 SMTP with invalid --mail-rcpt and --mail-rcpt-allowfails
- </name>
+</name>
 <stdin>
 From: different
 To: another
 
 body
 </stdin>
- <command>
-smtp://%HOSTIP:%SMTPPORT/3007 --mail-rcpt-allowfails --mail-rcpt invalid.one --mail-from sender@example.com -T -
+<command>
+smtp://%HOSTIP:%SMTPPORT/%TESTNUMBER --mail-rcpt-allowfails --mail-rcpt invalid.one --mail-from sender@example.com -T -
 </command>
 </client>
 
@@ -38,7 +38,7 @@ smtp://%HOSTIP:%SMTPPORT/3007 --mail-rcpt-allowfails --mail-rcpt invalid.one --m
 55
 </errorcode>
 <protocol>
-EHLO 3007
+EHLO %TESTNUMBER
 MAIL FROM:<sender@example.com>
 RCPT TO:<invalid.one>
 QUIT

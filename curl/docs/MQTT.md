@@ -7,11 +7,11 @@ Doing a "POST" publishes the post data to the topic and exits.
 
 Example subscribe:
 
-    curl mqtt://host/home/bedroom/temp
+    curl mqtt://host.home/bedroom/temp
 
 Example publish:
 
-    curl -d 75 mqtt://host/home/bedroom/dimmer
+    curl -d 75 mqtt://host.home/bedroom/dimmer
 
 ## What does curl deliver as a response to a subscribe
 
@@ -21,9 +21,7 @@ payload.
 ## Caveats
 
 Remaining limitations:
- - No username support
  - Only QoS level 0 is implemented for publish
  - No way to set retain flag for publish
- - No username/password support
  - No TLS (mqtts) support
- - Naive EAGAIN handling won't handle split messages
+ - Naive EAGAIN handling will not handle split messages
