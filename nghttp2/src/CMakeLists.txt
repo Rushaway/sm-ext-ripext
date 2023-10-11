@@ -1,5 +1,3 @@
-add_subdirectory(includes)
-
 file(GLOB c_sources *.c)
 set_source_files_properties(${c_sources} PROPERTIES
   COMPILE_FLAGS "${WARNCFLAGS}")
@@ -15,10 +13,14 @@ include_directories(
   ${JEMALLOC_INCLUDE_DIRS}
   ${LIBXML2_INCLUDE_DIRS}
   ${LIBEV_INCLUDE_DIRS}
+  ${LIBNGHTTP3_INCLUDE_DIRS}
+  ${LIBNGTCP2_INCLUDE_DIRS}
+  ${LIBNGTCP2_CRYPTO_QUICTLS_INCLUDE_DIRS}
   ${OPENSSL_INCLUDE_DIRS}
   ${LIBCARES_INCLUDE_DIRS}
   ${JANSSON_INCLUDE_DIRS}
   ${ZLIB_INCLUDE_DIRS}
+  ${LIBBPF_INCLUDE_DIRS}
 )
 
 # XXX per-target?
@@ -27,11 +29,15 @@ link_libraries(
   ${JEMALLOC_LIBRARIES}
   ${LIBXML2_LIBRARIES}
   ${LIBEV_LIBRARIES}
+  ${LIBNGHTTP3_LIBRARIES}
+  ${LIBNGTCP2_LIBRARIES}
+  ${LIBNGTCP2_CRYPTO_QUICTLS_LIBRARIES}
   ${OPENSSL_LIBRARIES}
   ${LIBCARES_LIBRARIES}
   ${JANSSON_LIBRARIES}
   ${ZLIB_LIBRARIES}
   ${APP_LIBRARIES}
+  ${LIBBPF_LIBRARIES}
 )
 
 if(ENABLE_APP)
@@ -67,7 +73,13 @@ if(ENABLE_APP)
     h2load_http2_session.cc
     h2load_http1_session.cc
   )
-
+  if(ENABLE_HTTP3)
+    list(APPEND H2LOAD_SOURCES
+      h2load_http3_session.cc
+      h2load_quic.cc
+      quic.cc
+    )
+  endif()
 
   # Common libnhttpx sources (used for nghttpx and unit tests)
   set(NGHTTPX_SRCS
@@ -104,6 +116,7 @@ if(ENABLE_APP)
     shrpx_router.cc
     shrpx_api_downstream_connection.cc
     shrpx_health_monitor_downstream_connection.cc
+    shrpx_null_downstream_connection.cc
     shrpx_exec.cc
     shrpx_dns_resolver.cc
     shrpx_dual_dns_resolver.cc
@@ -117,6 +130,16 @@ if(ENABLE_APP)
       shrpx_mruby_module_env.cc
       shrpx_mruby_module_request.cc
       shrpx_mruby_module_response.cc
+    )
+  endif()
+  if(ENABLE_HTTP3)
+    list(APPEND NGHTTPX_SRCS
+     shrpx_quic.cc
+     shrpx_quic_listener.cc
+     shrpx_quic_connection_handler.cc
+     shrpx_http3_upstream.cc
+     http3.cc
+     quic.cc
     )
   endif()
   add_library(nghttpx_static STATIC ${NGHTTPX_SRCS})
@@ -189,7 +212,10 @@ if(ENABLE_APP)
   add_executable(nghttpx  ${NGHTTPX-bin_SOURCES} $<TARGET_OBJECTS:llhttp>
     $<TARGET_OBJECTS:url-parser>
   )
-  target_compile_definitions(nghttpx PRIVATE "-DPKGDATADIR=\"${PKGDATADIR}\"")
+  target_compile_definitions(nghttpx PRIVATE
+    "-DPKGDATADIR=\"${PKGDATADIR}\""
+    "-DPKGLIBDIR=\"${PKGLIBDIR}\""
+  )
   target_link_libraries(nghttpx nghttpx_static)
   add_executable(h2load   ${H2LOAD_SOURCES}   $<TARGET_OBJECTS:llhttp>
     $<TARGET_OBJECTS:url-parser>
@@ -207,71 +233,11 @@ if(ENABLE_HPACK_TOOLS)
   set(deflatehd_SOURCES
     deflatehd.cc
     comp_helper.c
+    util.cc
+    timegm.c
   )
   add_executable(inflatehd ${inflatehd_SOURCES})
   add_executable(deflatehd ${deflatehd_SOURCES})
   install(TARGETS inflatehd deflatehd
     RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}")
-endif()
-
-if(ENABLE_ASIO_LIB)
-  set(NGHTTP2_ASIO_SOURCES
-    util.cc http2.cc
-    tls.cc
-    timegm.c
-    asio_common.cc
-    asio_io_service_pool.cc
-    asio_server_http2.cc
-    asio_server_http2_impl.cc
-    asio_server.cc
-    asio_server_http2_handler.cc
-    asio_server_request.cc
-    asio_server_request_impl.cc
-    asio_server_response.cc
-    asio_server_response_impl.cc
-    asio_server_stream.cc
-    asio_server_serve_mux.cc
-    asio_server_request_handler.cc
-    asio_server_tls_context.cc
-    asio_client_session.cc
-    asio_client_session_impl.cc
-    asio_client_session_tcp_impl.cc
-    asio_client_session_tls_impl.cc
-    asio_client_response.cc
-    asio_client_response_impl.cc
-    asio_client_request.cc
-    asio_client_request_impl.cc
-    asio_client_stream.cc
-    asio_client_tls_context.cc
-  )
-
-  add_library(nghttp2_asio SHARED
-     ${NGHTTP2_ASIO_SOURCES}
-     $<TARGET_OBJECTS:llhttp>
-     $<TARGET_OBJECTS:url-parser>
-  )
-  target_include_directories(nghttp2_asio PRIVATE
-    ${OPENSSL_INCLUDE_DIRS}
-    ${Boost_INCLUDE_DIRS}
-  )
-  target_include_directories(nghttp2_asio INTERFACE
-    "${CMAKE_CURRENT_BINARY_DIR}/../lib/includes"
-    "${CMAKE_CURRENT_SOURCE_DIR}/../lib/includes"
-    "${CMAKE_CURRENT_SOURCE_DIR}/includes"
-  )
-  target_link_libraries(nghttp2_asio
-    nghttp2
-    ${OPENSSL_LIBRARIES}
-    ${Boost_LIBRARIES}
-  )
-  set_target_properties(nghttp2_asio PROPERTIES
-    VERSION 1.0.0 SOVERSION 1)
-
-  install(TARGETS nghttp2_asio
-    ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-    LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-    RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}")
-
-  install(FILES "${CMAKE_CURRENT_BINARY_DIR}/libnghttp2_asio.pc"
-    DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig")
 endif()
