@@ -22,13 +22,13 @@ telnet
 <features>
 telnet
 </features>
- <name>
+<name>
 Basic TELNET negotiation
- </name>
+</name>
 <stdin>
-test1452
+test%TESTNUMBER
 </stdin>
- <command>
+<command>
 telnet://%HOSTIP:%TELNETPORT --upload-file -
 </command>
 </client>
@@ -37,7 +37,7 @@ telnet://%HOSTIP:%TELNETPORT --upload-file -
 # Verify data after the test has been "shot"
 <verify>
 <stdout nonewline="yes">
-test1452
+test%TESTNUMBER
 </stdout>
 </verify>
 </testcase>

@@ -20,11 +20,11 @@ REPLY SIZE 500 command not understood
 <server>
 ftp
 </server>
- <name>
+<name>
 FTP download, failed RETR with PORT
- </name>
- <command>
-ftp://%HOSTIP:%FTPPORT/119 -P -
+</name>
+<command>
+ftp://%HOSTIP:%FTPPORT/%TESTNUMBER -P -
 </command>
 </client>
 
@@ -43,8 +43,8 @@ USER anonymous
 PASS ftp@example.com
 PWD
 TYPE I
-SIZE 119
-RETR 119
+SIZE %TESTNUMBER
+RETR %TESTNUMBER
 QUIT
 </protocol>
 </verify>

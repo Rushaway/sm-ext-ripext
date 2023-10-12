@@ -43,11 +43,11 @@ Funny-head: yesyes
 <server>
 http
 </server>
- <name>
+<name>
 HTTP with -z "newer date"
- </name>
- <command>
-http://%HOSTIP:%HTTPPORT/78 -z "dec 12 11:00:00 1999 GMT"
+</name>
+<command>
+http://%HOSTIP:%HTTPPORT/%TESTNUMBER -z "dec 12 11:00:00 1999 GMT"
 </command>
 </client>
 
@@ -55,7 +55,7 @@ http://%HOSTIP:%HTTPPORT/78 -z "dec 12 11:00:00 1999 GMT"
 # Verify data after the test has been "shot"
 <verify>
 <protocol>
-GET /78 HTTP/1.1
+GET /%TESTNUMBER HTTP/1.1
 Host: %HOSTIP:%HTTPPORT
 User-Agent: curl/%VERSION
 Accept: */*

@@ -42,11 +42,11 @@ pop3
 <features>
 crypto
 </features>
- <name>
+<name>
 POP3 CRAM-MD5 authentication with SASL downgrade
- </name>
- <command>
-pop3://%HOSTIP:%POP3PORT/879 -u user:secret
+</name>
+<command>
+pop3://%HOSTIP:%POP3PORT/%TESTNUMBER -u user:secret
 </command>
 </client>
 
@@ -59,7 +59,7 @@ AUTH CRAM-MD5
 *
 AUTH PLAIN
 AHVzZXIAc2VjcmV0
-RETR 879
+RETR %TESTNUMBER
 QUIT
 </protocol>
 </verify>

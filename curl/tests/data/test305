@@ -15,11 +15,11 @@ SSL
 <server>
 https
 </server>
- <name>
+<name>
 insecure HTTPS without permission
- </name>
- <command>
-https://%HOSTIP:%HTTPSPORT/want/305 --cacert moooo
+</name>
+<command>
+https://%HOSTIP:%HTTPSPORT/want/%TESTNUMBER --cacert moooo
 </command>
 </client>
 
